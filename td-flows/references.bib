@@ -1,0 +1,207 @@
+@misc{albergoStochasticInterpolantsUnifying2023,
+  title = {Stochastic {{Interpolants}}: {{A Unifying Framework}} for {{Flows}} and {{Diffusions}}},
+  shorttitle = {Stochastic {{Interpolants}}},
+  author = {Albergo, Michael S. and Boffi, Nicholas M. and {Vanden-Eijnden}, Eric},
+  year = {2023},
+  month = nov,
+  number = {arXiv:2303.08797},
+  eprint = {2303.08797},
+  primaryclass = {cs},
+  publisher = {arXiv},
+  doi = {10.48550/arXiv.2303.08797},
+  urldate = {2025-07-01},
+  abstract = {A class of generative models that unifies flow-based and diffusion-based methods is introduced. These models extend the framework proposed in [2], enabling the use of a broad class of continuoustime stochastic processes called `stochastic interpolants' to bridge any two arbitrary probability density functions exactly in finite time. These interpolants are built by combining data from the two prescribed densities with an additional latent variable that shapes the bridge in a flexible way. The time-dependent probability density function of the stochastic interpolant is shown to satisfy a first-order transport equation as well as a family of forward and backward Fokker-Planck equations with tunable diffusion coefficient. Upon consideration of the time evolution of an individual sample, this viewpoint immediately leads to both deterministic and stochastic generative models based on probability flow equations or stochastic differential equations with an adjustable level of noise. The drift coefficients entering these models are time-dependent velocity fields characterized as the unique minimizers of simple quadratic objective functions, one of which is a new objective for the score of the interpolant density. We show that minimization of these quadratic objectives leads to control of the likelihood for generative models built upon stochastic dynamics, while likelihood control for deterministic dynamics is more stringent. We also construct estimators for the likelihood and the cross-entropy of interpolant-based generative models, and we discuss connections with other methods such as score-based diffusion models, stochastic localization processes, probabilistic denoising techniques, and rectifying flows. In addition, we demonstrate that stochastic interpolants recover the Schro{\textasciidieresis}dinger bridge between the two target densities when explicitly optimizing over the interpolant. Finally, algorithmic aspects are discussed and the approach is illustrated on numerical examples.},
+  archiveprefix = {arXiv},
+  langid = {english},
+  keywords = {Computer Science - Machine Learning,Condensed Matter - Disordered Systems and Neural Networks,Mathematics - Probability},
+  file = {/home/kellen/Downloads/pdfs/storage/2KCKGFYP/Albergo et al. - 2023 - Stochastic Interpolants A Unifying Framework for .pdf}
+}
+
+@article{chenNeuralOrdinaryDifferential,
+  title = {Neural {{Ordinary Differential Equations}}},
+  author = {Chen, Tian Qi and Rubanova, Yulia and Bettencourt, Jesse and Duvenaud, David K},
+  abstract = {We introduce a new family of deep neural network models. Instead of specifying a discrete sequence of hidden layers, we parameterize the derivative of the hidden state using a neural network. The output of the network is computed using a blackbox differential equation solver. These continuous-depth models have constant memory cost, adapt their evaluation strategy to each input, and can explicitly trade numerical precision for speed. We demonstrate these properties in continuous-depth residual networks and continuous-time latent variable models. We also construct continuous normalizing flows, a generative model that can train by maximum likelihood, without partitioning or ordering the data dimensions. For training, we show how to scalably backpropagate through any ODE solver, without access to its internal operations. This allows end-to-end training of ODEs within larger models.},
+  langid = {english},
+  file = {/home/kellen/Downloads/pdfs/storage/VFWL2F6U/Chen et al. - Neural Ordinary Differential Equations.pdf}
+}
+
+@misc{farebrotherTemporalDifferenceFlows2025,
+  title = {Temporal {{Difference Flows}}},
+  author = {Farebrother, Jesse and Pirotta, Matteo and Tirinzoni, Andrea and Munos, R{\'e}mi and Lazaric, Alessandro and Touati, Ahmed},
+  year = {2025},
+  month = mar,
+  number = {arXiv:2503.09817},
+  eprint = {2503.09817},
+  primaryclass = {cs},
+  publisher = {arXiv},
+  doi = {10.48550/arXiv.2503.09817},
+  urldate = {2025-06-14},
+  abstract = {Predictive models of the future are fundamental for an agent's ability to reason and plan. A common strategy learns a world model and unrolls it step-by-step at inference, where small errors can rapidly compound. Geometric Horizon Models (GHMs) offer a compelling alternative by directly making predictions of future states, avoiding cumulative inference errors. While GHMs can be conveniently learned by a generative analog to temporal difference (TD) learning, existing methods are negatively affected by bootstrapping predictions at train time and struggle to generate high-quality predictions at long horizons. This paper introduces Temporal Difference Flows (TD-Flow), which leverages the structure of a novel Bellman equation on probability paths alongside flow-matching techniques to learn accurate GHMs at over 5x the horizon length of prior methods. Theoretically, we establish a new convergence result and primarily attribute TD-Flow's efficacy to reduced gradient variance during training. We further show that similar arguments can be extended to diffusion-based methods. Empirically, we validate TD-Flow across a diverse set of domains on both generative metrics and downstream tasks including policy evaluation. Moreover, integrating TD-Flow with recent behavior foundation models for planning over pre-trained policies demonstrates substantial performance gains, underscoring its promise for long-horizon decision-making.},
+  archiveprefix = {arXiv},
+  keywords = {Computer Science - Artificial Intelligence,Computer Science - Machine Learning,Statistics - Machine Learning},
+  file = {/home/kellen/Downloads/pdfs/storage/2V2SR66H/Farebrother et al. - 2025 - Temporal Difference Flows.pdf;/home/kellen/Downloads/pdfs/storage/D27PSL2L/2503.html}
+}
+
+@misc{gaoDiffusionMeetsFlow2024,
+  title = {Diffusion {{Meets Flow Matching}}: {{Two Sides}} of the {{Same Coin}}},
+  author = {Gao, Ruiqi and Hoogeboom, Emiel and Heek, Jonathan and De Bortoli, Valentin and Murphy, Kevin P. and Salimans, Tim},
+  year = {2024},
+  month = dec
+}
+
+@misc{ghugareNormalizingFlowsAre2025,
+  title = {Normalizing {{Flows}} Are {{Capable Models}} for {{RL}}},
+  author = {Ghugare, Raj and Eysenbach, Benjamin},
+  year = {2025},
+  month = jun,
+  number = {arXiv:2505.23527},
+  eprint = {2505.23527},
+  primaryclass = {cs},
+  publisher = {arXiv},
+  doi = {10.48550/arXiv.2505.23527},
+  urldate = {2025-06-30},
+  abstract = {Modern reinforcement learning (RL) algorithms have found success by using powerful probabilistic models, such as transformers, energy-based models, and diffusion/flow-based models. To this end, RL researchers often choose to pay the price of accommodating these models into their algorithms -- diffusion models are expressive, but are computationally intensive due to their reliance on solving differential equations, while autoregressive transformer models are scalable but typically require learning discrete representations. Normalizing flows (NFs), by contrast, seem to provide an appealing alternative, as they enable likelihoods and sampling without solving differential equations or autoregressive architectures. However, their potential in RL has received limited attention, partly due to the prevailing belief that normalizing flows lack sufficient expressivity. We show that this is not the case. Building on recent work in NFs, we propose a single NF architecture which integrates seamlessly into RL algorithms, serving as a policy, Q-function, and occupancy measure. Our approach leads to much simpler algorithms, and achieves higher performance in imitation learning, offline, goal conditioned RL and unsupervised RL.},
+  archiveprefix = {arXiv},
+  langid = {english},
+  keywords = {Computer Science - Machine Learning},
+  file = {/home/kellen/Downloads/pdfs/storage/IW3SLYLD/Ghugare and Eysenbach - 2025 - Normalizing Flows are Capable Models for RL.pdf}
+}
+
+@article{grathwohlFFJORDFreeFormContinuous2019,
+  title = {{{FFJORD}}: {{Free-Form Continuous DYnamics}} for {{Scalable Reversible Generative Models}}},
+  author = {Grathwohl, Will and Chen, Ricky T Q and Bettencourt, Jesse and Sutskever, Ilya and Duvenaud, David},
+  year = {2019},
+  abstract = {Reversible generative models map points from a simple distribution to a complex distribution through an easily invertible neural network. Likelihood-based training of these models requires restricting their architectures to allow cheap computation of Jacobian determinants. Alternatively, the Jacobian trace can be used if the transformation is specified by an ordinary differential equation. In this paper, we use Hutchinson's trace estimator to give a scalable unbiased estimate of the logdensity. The result is a continuous-time invertible generative model with unbiased density estimation and one-pass sampling, while allowing unrestricted neural network architectures. We demonstrate our approach on high-dimensional density estimation, image generation, and variational inference, improving the state-ofthe-art among exact likelihood methods with efficient sampling.},
+  langid = {english},
+  file = {/home/kellen/Downloads/pdfs/storage/2H337KKY/Grathwohl et al. - 2019 - FFJORD FREE-FORM CONTINUOUS DYNAMICS FOR SCALABLE.pdf}
+}
+
+@misc{lipmanFlowMatchingGenerative2023,
+  title = {Flow {{Matching}} for {{Generative Modeling}}},
+  author = {Lipman, Yaron and Chen, Ricky T. Q. and {Ben-Hamu}, Heli and Nickel, Maximilian and Le, Matt},
+  year = {2023},
+  month = feb,
+  number = {arXiv:2210.02747},
+  eprint = {2210.02747},
+  primaryclass = {cs},
+  publisher = {arXiv},
+  doi = {10.48550/arXiv.2210.02747},
+  urldate = {2025-06-20},
+  abstract = {We introduce a new paradigm for generative modeling built on Continuous Normalizing Flows (CNFs), allowing us to train CNFs at unprecedented scale. Specifically, we present the notion of Flow Matching (FM), a simulation-free approach for training CNFs based on regressing vector fields of fixed conditional probability paths. Flow Matching is compatible with a general family of Gaussian probability paths for transforming between noise and data samples -- which subsumes existing diffusion paths as specific instances. Interestingly, we find that employing FM with diffusion paths results in a more robust and stable alternative for training diffusion models. Furthermore, Flow Matching opens the door to training CNFs with other, non-diffusion probability paths. An instance of particular interest is using Optimal Transport (OT) displacement interpolation to define the conditional probability paths. These paths are more efficient than diffusion paths, provide faster training and sampling, and result in better generalization. Training CNFs using Flow Matching on ImageNet leads to consistently better performance than alternative diffusion-based methods in terms of both likelihood and sample quality, and allows fast and reliable sample generation using off-the-shelf numerical ODE solvers.},
+  archiveprefix = {arXiv},
+  keywords = {Computer Science - Artificial Intelligence,Computer Science - Machine Learning,Statistics - Machine Learning},
+  file = {/home/kellen/Downloads/pdfs/storage/WMMQDW4B/Lipman et al. - 2023 - Flow Matching for Generative Modeling.pdf;/home/kellen/Downloads/pdfs/storage/R693NNL4/2210.html}
+}
+
+@misc{lipmanFlowMatchingGuide2024a,
+  title = {Flow {{Matching Guide}} and {{Code}}},
+  author = {Lipman, Yaron and Havasi, Marton and Holderrieth, Peter and Shaul, Neta and Le, Matt and Karrer, Brian and Chen, Ricky T. Q. and {Lopez-Paz}, David and {Ben-Hamu}, Heli and Gat, Itai},
+  year = {2024},
+  month = dec,
+  number = {arXiv:2412.06264},
+  eprint = {2412.06264},
+  primaryclass = {cs},
+  publisher = {arXiv},
+  doi = {10.48550/arXiv.2412.06264},
+  urldate = {2025-06-24},
+  abstract = {Flow Matching (FM) is a recent framework for generative modeling that has achieved state-of-the-art performance across various domains, including image, video, audio, speech, and biological structures. This guide offers a comprehensive and self-contained review of FM, covering its mathematical foundations, design choices, and extensions. By also providing a PyTorch package featuring relevant examples (e.g., image and text generation), this work aims to serve as a resource for both novice and experienced researchers interested in understanding, applying and further developing FM.},
+  archiveprefix = {arXiv},
+  langid = {english},
+  keywords = {Computer Science - Machine Learning},
+  file = {/home/kellen/Downloads/pdfs/storage/4INDYLDI/Lipman et al. - 2024 - Flow Matching Guide and Code.pdf}
+}
+
+@misc{liuFlowStraightFast2022,
+  title = {Flow {{Straight}} and {{Fast}}: {{Learning}} to {{Generate}} and {{Transfer Data}} with {{Rectified Flow}}},
+  shorttitle = {Flow {{Straight}} and {{Fast}}},
+  author = {Liu, Xingchao and Gong, Chengyue and Liu, Qiang},
+  year = {2022},
+  month = sep,
+  number = {arXiv:2209.03003},
+  eprint = {2209.03003},
+  primaryclass = {cs},
+  publisher = {arXiv},
+  doi = {10.48550/arXiv.2209.03003},
+  urldate = {2025-07-01},
+  abstract = {We present rectified flow, a surprisingly simple approach to learning (neural) ordinary differential equation (ODE) models to transport between two empirically observed distributions {$\pi$}0 and {$\pi$}1, hence providing a unified solution to generative modeling and domain transfer, among various other tasks involving distribution transport. The idea of rectified flow is to learn the ODE to follow the straight paths connecting the points drawn from {$\pi$}0 and {$\pi$}1 as much as possible. This is achieved by solving a straightforward nonlinear least squares optimization problem, which can be easily scaled to large models without introducing extra parameters beyond standard supervised learning. The straight paths are special and preferred because they are the shortest paths between two points, and can be simulated exactly without time discretization and hence yield computationally efficient models. We show that the procedure of learning a rectified flow from data, called rectification, turns an arbitrary coupling of {$\pi$}0 and {$\pi$}1 to a new deterministic coupling with provably non-increasing convex transport costs. In addition, recursively applying rectification allows us to obtain a sequence of flows with increasingly straight paths, which can be simulated accurately with coarse time discretization in the inference phase. In empirical studies, we show that rectified flow performs superbly on image generation, image-to-image translation, and domain adaptation. In particular, on image generation and translation, our method yields nearly straight flows that give high quality results even with a single Euler discretization step.},
+  archiveprefix = {arXiv},
+  langid = {english},
+  keywords = {Computer Science - Machine Learning},
+  file = {/home/kellen/Downloads/pdfs/storage/49M9XQS5/Liu et al. - 2022 - Flow Straight and Fast Learning to Generate and T.pdf}
+}
+
+@book{oksendalStochasticDifferentialEquations2003a,
+  title = {Stochastic {{Differential Equations}}},
+  author = {{\O}ksendal, Bernt},
+  year = {2003},
+  series = {Universitext},
+  publisher = {Springer Berlin Heidelberg},
+  address = {Berlin, Heidelberg},
+  doi = {10.1007/978-3-642-14394-6},
+  urldate = {2025-06-23},
+  copyright = {http://www.springer.com/tdm},
+  isbn = {978-3-540-04758-2 978-3-642-14394-6},
+  langid = {english},
+  file = {/home/kellen/Downloads/pdfs/storage/CKXWK7Z2/Øksendal - 2003 - Stochastic Differential Equations.pdf}
+}
+
+@misc{parkFlowQLearning2025,
+  title = {Flow {{Q-Learning}}},
+  author = {Park, Seohong and Li, Qiyang and Levine, Sergey},
+  year = {2025},
+  month = may,
+  number = {arXiv:2502.02538},
+  eprint = {2502.02538},
+  primaryclass = {cs},
+  publisher = {arXiv},
+  doi = {10.48550/arXiv.2502.02538},
+  urldate = {2025-07-01},
+  abstract = {We present flow Q-learning (FQL), a simple and performant offline reinforcement learning (RL) method that leverages an expressive flow-matching policy to model arbitrarily complex action distributions in data. Training a flow policy with RL is a tricky problem, due to the iterative nature of the action generation process. We address this challenge by training an expressive one-step policy with RL, rather than directly guiding an iterative flow policy to maximize values. This way, we can completely avoid unstable recursive backpropagation, eliminate costly iterative action generation at test time, yet still mostly maintain expressivity. We experimentally show that FQL leads to strong performance across 73 challenging state- and pixel-based OGBench and D4RL tasks in offline RL and offline-to-online RL. Project page: https://seohong.me/projects/fql/},
+  archiveprefix = {arXiv},
+  langid = {english},
+  keywords = {Computer Science - Artificial Intelligence,Computer Science - Machine Learning},
+  file = {/home/kellen/Downloads/pdfs/storage/83WF47FI/Park et al. - 2025 - Flow Q-Learning.pdf}
+}
+
+@misc{parkHorizonReductionMakes2025a,
+  title = {Horizon {{Reduction Makes RL Scalable}}},
+  author = {Park, Seohong and Frans, Kevin and Mann, Deepinder and Eysenbach, Benjamin and Kumar, Aviral and Levine, Sergey},
+  year = {2025},
+  month = jun,
+  number = {arXiv:2506.04168},
+  eprint = {2506.04168},
+  primaryclass = {cs},
+  publisher = {arXiv},
+  doi = {10.48550/arXiv.2506.04168},
+  urldate = {2025-07-01},
+  abstract = {In this work, we study the scalability of offline reinforcement learning (RL) algorithms. In principle, a truly scalable offline RL algorithm should be able to solve any given problem, regardless of its complexity, given sufficient data, compute, and model capacity. We investigate if and how current offline RL algorithms match up to this promise on diverse, challenging, previously unsolved tasks, using datasets up to 1000x larger than typical offline RL datasets. We observe that despite scaling up data, many existing offline RL algorithms exhibit poor scaling behavior, saturating well below the maximum performance. We hypothesize that the horizon is the main cause behind the poor scaling of offline RL. We empirically verify this hypothesis through several analysis experiments, showing that long horizons indeed present a fundamental barrier to scaling up offline RL. We then show that various horizon reduction techniques substantially enhance scalability on challenging tasks. Based on our insights, we also introduce a minimal yet scalable method named SHARSA that effectively reduces the horizon. SHARSA achieves the best asymptotic performance and scaling behavior among our evaluation methods, showing that explicitly reducing the horizon unlocks the scalability of offline RL. Code: https://github.com/seohongpark/horizon-reduction},
+  archiveprefix = {arXiv},
+  langid = {english},
+  keywords = {Computer Science - Artificial Intelligence,Computer Science - Machine Learning},
+  file = {/home/kellen/Downloads/pdfs/storage/ZTBUYVHS/Park et al. - 2025 - Horizon Reduction Makes RL Scalable.pdf}
+}
+
+@misc{parkQlearningNotScalable2025,
+  title = {Q-Learning Is Not yet Scalable},
+  author = {Park, Seohong},
+  year = {2025},
+  month = jun
+}
+
+@misc{zhengIntentionConditionedFlowOccupancy2025,
+  title = {Intention-{{Conditioned Flow Occupancy Models}}},
+  author = {Zheng, Chongyi and Park, Seohong and Levine, Sergey and Eysenbach, Benjamin},
+  year = {2025},
+  month = jun,
+  number = {arXiv:2506.08902},
+  eprint = {2506.08902},
+  primaryclass = {cs},
+  publisher = {arXiv},
+  doi = {10.48550/arXiv.2506.08902},
+  urldate = {2025-06-25},
+  abstract = {Large-scale pre-training has fundamentally changed how machine learning research is done today: large foundation models are trained once, and then can be used by anyone in the community (including those without data or compute resources to train a model from scratch) to adapt and fine-tune to specific tasks. Applying this same framework to reinforcement learning (RL) is appealing because it offers compelling avenues for addressing core challenges in RL, including sample efficiency and robustness. However, there remains a fundamental challenge to pre-train large models in the context of RL: actions have long-term dependencies, so training a foundation model that reasons across time is important. Recent advances in generative AI have provided new tools for modeling highly complex distributions. In this paper, we build a probabilistic model to predict which states an agent will visit in the temporally distant future (i.e., an occupancy measure) using flow matching. As large datasets are often constructed by many distinct users performing distinct tasks, we include in our model a latent variable capturing the user intention. This intention increases the expressivity of our model, and enables adaptation with generalized policy improvement. We call our proposed method intention-conditioned flow occupancy models (InFOM). Comparing with alternative methods for pre-training, our experiments on 36 state-based and 4 image-based benchmark tasks demonstrate that the proposed method achieves 1.8{\texttimes} median improvement in returns and increases success rates by 36\%.},
+  archiveprefix = {arXiv},
+  langid = {english},
+  keywords = {Computer Science - Artificial Intelligence,Computer Science - Machine Learning},
+  file = {/home/kellen/Downloads/pdfs/storage/MGADHFSN/Zheng et al. - 2025 - Intention-Conditioned Flow Occupancy Models.pdf}
+}

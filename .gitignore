@@ -1,0 +1,18 @@
+# LaTeX auxiliary files
+**/MATLAB
+**/*.nav
+**/*.snm
+**/*.aux
+**/*.log
+**/*.toc
+**/*.lof
+**/*.lot
+**/*.fls
+**/*.out
+**/*.synctex.gz
+**/*.fdb_latexmk
+**/*.bbl
+**/*.blg
+**/*.dvi
+**/*.bak
+**/*.npy
