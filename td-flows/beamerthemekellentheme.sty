@@ -26,33 +26,27 @@
 \definecolor{red}{RGB}{154,51,36}
 \definecolor{green}{RGB}{117,152,141}
 \definecolor{orange}{RGB}{216,96,24}
-% Define a footer variable
-\newcommand{\myfooter}{}
-
-% Custom footer setup
-\setbeamertemplate{footline}{
-  \leavevmode%
-  \hbox{%
-    \begin{beamercolorbox}[wd=\paperwidth,ht=2.5ex,dp=1ex,center]{author in head/foot}%
-      \myfooter
-    \end{beamercolorbox}%
-  }%
-}
 
 \setbeamercolor{block title}{bg=gray!10,fg=blue}
 \setbeamercolor{block body}{bg=gray!10,fg=black}
-\setbeamerfont{block title}{series=\bfseries}
+\setbeamerfont{block title}{series=\bfseries, size=\normalsize}
+\setbeamerfont{block body}{series=\mdseries, size=\small}
 \setbeamertemplate{blocks}[rounded][shadow=false]
 
 % ALERT BLOCK (usually red)
 \setbeamercolor{block title alerted}{bg=red!10}
 \setbeamercolor{block body alerted}{bg=red!10, fg=black}
-\setbeamerfont{block title alerted}{series=\bfseries}
 
 % EXAMPLE BLOCK (usually green/blue)
 \setbeamercolor{block title example}{bg=green!30, fg=green!90!black}
 \setbeamercolor{block body example}{bg=green!30, fg=black}
-\setbeamerfont{block title example}{series=\bfseries}
+
+\newenvironment{borderblock}[1]{%
+  \setbeamercolor{block body orange}{bg=orange!10, fg=black}
+  \begin{beamerboxesrounded}[lower=block body orange, upper=block title orange]{\usebeamerfont{block title}\bfseries #1}
+}{%
+  \end{beamerboxesrounded}
+}
 
 \newenvironment{orangeblock}[1]{%
   \setbeamercolor{block title orange}{fg=orange,bg=orange!10}
@@ -81,7 +75,8 @@
 % \sloppy                         % Allow LaTeX more flexibility in line-breaking to reduce overfull lines (long lines extending into the margins).
 
 % Set beamer colors
-\setbeamercolor{frametitle}{bg=blue, fg=white}
+\setbeamercolor{frametitle}{bg=white, fg=blue}
+\setbeamerfont{frametitle}{series=\bfseries, shape=\itshape, size=\large}
 \setbeamercolor{title}{fg=blue}
 \setbeamercolor{structure}{fg=blue}
 \setbeamercolor{item}{fg=blue}
