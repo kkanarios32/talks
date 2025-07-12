@@ -3,41 +3,16 @@
 \usepackage{tikz}
 \usepackage{svg}
 \usepackage{multimedia}
-\usepackage{tcolorbox}
-
-% Define a custom block
-\newtcolorbox{blackblock}[1][]{
-  colback=white,         % Background of body
-  colframe=black,        % Border color
-  coltitle=black,        % Title text color
-  colbacktitle=white,    % Title background color
-  fonttitle=\bfseries,   % Bold title font
-  title=#1,              % Title text
-  boxrule=1pt,         % Border width
-  arc=1mm,               % Rounded corners (optional)
-  left=1mm, right=1mm, top=1mm, bottom=1mm,
-}
-\newtcolorbox{redblock}[1][]{
-  colback=white,         % Background of body
-  colframe=red,        % Border color
-  coltitle=red,        % Title text color
-  colbacktitle=white,    % Title background color
-  fonttitle=\bfseries,   % Bold title font
-  title=#1,              % Title text
-  boxrule=1pt,         % Border width
-  arc=1mm,               % Rounded corners (optional)
-  left=1mm, right=1mm, top=1mm, bottom=1mm,
-}
 
 % Theme choice:
 \usetheme{kellentheme}
 
 % Title page details: 
-\title{Temporal Difference Flows \cite{farebrotherTemporalDifferenceFlows2025}} 
+\title{Temporal Difference Flows \citep{farebrotherTemporalDifferenceFlows2025}} 
 \author{Kellen Kanarios}
 \date{\today}
 \logo{
-    % \includegraphics[width=0.05\linewidth]{figures/umich-m.png}
+    \includegraphics[width=0.05\linewidth]{figures/umich-m.png}
 }
 
 
@@ -55,22 +30,25 @@
 \end{frame}
 
 \section{Motivation}
-\begin{frame}{Variational inference with normalizing flows \cite{rezendeVariationalInferenceNormalizing}} 
+\begin{frame}{Variational inference with normalizing flows \citep{rezendeVariationalInferenceNormalizing}} 
+    Given data \( \mathcal{X} \sim p(\mathbf{x}) \). Want to learn \( p(\mathbf{x}) \). 
     \begin{itemize}
-        \item Want to maximize log-likelihood \( \log p_{\theta}(\mathbf{x}) \). Introduce latent \( \mathbf{z} \sim p \). 
+        \item Assume there exists some joint \( p(\mathbf{x}, \mathbf{z}) \), \( \mathbf{z} \sim p(\mathbf{z}) \) is latent (no samples of \( \mathbf{z} \)). (we choose \( p(\mathbf{z}) \) i.e. \( \mathcal{N}(0, 1) \) \)).
+        \item Maximize log-likelihood \( \log p_{\theta}(\mathbf{x}) \) via ELBO:
             \begin{align*}
                 \log p_{\theta}(\mathbf{x}) \geq \mathbb{D}_{\mathrm{KL}}[q_{\phi}(\mathbf{z} \mid \mathbf{x}) \mid \mid p(\mathbf{z})] + \mathbb{E}_{q}[\log p_{\theta}(\mathbf{x} \mid \mathbf{z})] \tag*{(ELBO)}
             .\end{align*}
         \item Simultaneously learn \( q_{\phi} \) and \( p_{\theta} \)
     \end{itemize}
     \onslide<2->{
-    \begin{redblock}
-        \color{red} \textbf{Problem}.
-        Need family \( q_{\phi} \) to contain \( p_{\theta}(z \mid x) \). 
-        \begin{itemize}
-            \item \color{red} Rarely the case.
-        \end{itemize}
-    \end{redblock}
+        \colorblock{red}[Problem]{
+            Recall \( q_{\phi^*} = \arg\max_{\phi} \mathrm{ELBO}(\phi) = p_{\theta}(z \mid x) \). 
+    \begin{itemize}
+    \color{red} 
+        \item Need parametric family \( q_{\phi} \) to contain \( p_{\theta}( \cdot \mid \mathbf{x}) \)
+        \item Rarely the case.
+    \end{itemize}
+    }
     }
     \onslide<3->{
     \begin{center}
@@ -79,16 +57,19 @@
     }
 \end{frame}
 \begin{frame}
-    Given target distribution \( q \). Pick some initial distribution \( p_{0} \), where we can sample \( \mathbf{z}_0 \sim p_{0} \).
-    \vskip 5pt
-    \begin{blackblock}
-\textbf{Idea:} \emph{Learn sequence of functions \( f_{1}, f_{2}, \ldots, f_{K} \), such that} \[ f_{K} \circ f_{K - 1} \cdots \circ f_{1}(\mathbf{z}_0) \sim q \]
-    \end{blackblock}
+    \vspace*{.5cm}
+    Given target distribution \( p(\mathbf{x}) \). Pick some initial distribution \( p_{0} \), where we can sample \( \mathbf{x}_0 \sim p_{0} \).
+    \colorblock{black}[Idea]{
+ \emph{Learn sequence of functions \( f_{1}, f_{2}, \ldots, f_{K} \), such that} \[ (f_{K} \circ f_{K - 1} \cdots \circ f_{1})(\mathbf{x}_0) \sim p \]
+}
+    \vspace*{-6.5cm}
+    \hspace*{-1cm}
     \begin{figure}
         \centering
-        \includegraphics[width=1.0\linewidth]{figures/normalizing-flow.png}
+        \includegraphics[width=\linewidth]{figures/normalizing-flow.png}
     \end{figure}
     \onslide<2->{
+    \vspace*{-7cm}
     \begin{center}
         \emph{How do we learn such a sequence of functions \( f_i \)?}
     \end{center}
@@ -96,23 +77,24 @@
 \end{frame}
 \begin{frame}
     Given \textbf{invertible}, \textbf{smooth both ways} function \( T : \mathbb{R}^d \to \mathbb{R}^d \).
-    \begin{blackblock}
-    \emph{Change of variables theorem}
+    \colorblock{black}{
+        \emph{Change of variables theorem}. For \( X, Y \subset \mathbb{R}^d \), \( T : X \to Y \)
     \begin{align*}
-        \int_{\mathbb{R}^d} p_{0}(\mathbf{x}) \mathrm{d}\mathbf{x} = \int_{\mathbb{R}^d} p_0(T^{-1}(\mathbf{y})) \left| \det \frac{\partial T}{\partial y} \right|^{-1}  \mathrm{d} \mathbf{y}
+        \int_{X} p_{0}(\mathbf{x}) \mathrm{d}\mathbf{x} = \int_{T^{-1}(Y)} p_0(T^{-1}(\mathbf{y})) \left| \det \frac{\partial T}{\partial y} \right|^{-1}  \mathrm{d} \mathbf{y}
     .\end{align*}
-    \end{blackblock}
+    \vspace*{-.5cm}
+    }
     \begin{figure}
         \includegraphics[width=0.5\linewidth]{figures/COVT.png}
     \end{figure}
-    \( \Rightarrow \) Density of \( f_{1}(\mathbf{z}_0) = p_{0}(\mathbf{z}_0) \left| \det \frac{\partial f_{1}}{\partial \mathbf{z}} \right|^{-1}  \) \\
-    \( \Rightarrow \) \( \log p_K(\mathbf{z}_k) = \log p_{0}(\mathbf{z}_0) - \sum_{k = 1}^{K} \left| \det \frac{\partial f_{k}}{\partial \mathbf{z}_{k - 1}} \right|^{-1}  \)
+    \( \Rightarrow \) \( f_{1}(\mathbf{x}_0) \sim p_{0}(\mathbf{x}_0) \left| \det \frac{\partial f_{1}}{\partial \mathbf{x}} \right|^{-1}  \) \\
+    \( \Rightarrow \) \( \log p_K(\mathbf{x}_k) = \log p_{0}(\mathbf{x}_0) - \sum_{k = 1}^{K} \left| \det \frac{\partial f_{k}}{\partial \mathbf{x}_{k - 1}} \right|^{-1}  \)
 \end{frame}
 \begin{frame}
     \begin{minipage}{0.7\linewidth}
-    \begin{blackblock}
-        \( \log p_K(\mathbf{z}_k) = \log p_{0}(\mathbf{z}_0) - \sum_{k = 1}^{K} \left| \det \frac{\partial f_{k}}{\partial \mathbf{z}_{k-1}} \right|^{-1}  \)
-    \end{blackblock}
+        \colorblock{black}[Re][\footnotesize]{
+        \( \log p_K(\mathbf{x}_k) = \log p_{0}(\mathbf{x}_0) - \sum_{k = 1}^{K} \left| \det \frac{\partial f_{k}}{\partial \mathbf{x}_{k-1}} \right|^{-1}  \)
+    }
     \end{minipage}
     \begin{enumerate}
         \item Given \( \mathbf{x}^{(i)} \) from dataset, compute \( \mathbf{x}^{(i)}_0 = (f_{K} \circ \cdots \circ f_{1})^{-1}(\mathbf{x}^{(i)}) \)
@@ -136,38 +118,35 @@
     }
     \vspace*{-0.7cm}
     \onslide<4->{
-    \begin{redblock}
+        \colorblock{red}{
         \color{red} Need to pick \textbf{simple} transformations i.e.
         \begin{align*}
-            f(\mathbf{z}) = \mathbf{z} + \mathbf{u}h(\mathbf{w}^{\top} \mathbf{z} + b)
+            f(\mathbf{x}) = \mathbf{x} + \mathbf{u}h(\mathbf{w}^{\top} \mathbf{x} + b)
         .\end{align*}
         Require \textbf{very large} \( K \) to represent complex distributions.
-    \end{redblock}
+    }
     }
     \onslide<5->{
     \emph{Why not take \( K \to \infty\)...}
     }
     \vspace*{-.5cm}
 \end{frame}
-\begin{frame}{Neural Ordinary Differential Equations \cite{chenNeuralOrdinaryDifferential}}
+\begin{frame}{Neural Ordinary Differential Equations \citep{chenNeuralOrdinaryDifferential}}
     \vspace*{-.25cm}
     \begin{columns}
         \begin{column}{0.59\linewidth}
-        Replace \( \mathbf{z}_{t + 1} = f_t(\mathbf{z}_t) \) with the \textbf{ODE} 
+        Replace \( \mathbf{x}_{t + 1} = f_t(\mathbf{x}_t) \) with the \textbf{ODE} 
         \begin{align*}
-            \frac{\mathrm{d}\mathbf{z}}{\mathrm{d}t} = f_t(\mathbf{z}_t)
+            \frac{\mathrm{d}\mathbf{x}}{\mathrm{d}t} = f_t(\mathbf{x}_t)
         .\end{align*}
         \end{column}
         \begin{column}{0.4\linewidth}
-            \vspace{-.25cm}
-            \begin{blackblock}
-                \footnotesize
-                \textbf{Remark.} \emph{Instantaneous COV}
-                \[ \frac{\partial \log p_t(\mathbf{z}_t)}{\partial t} = -\text{tr}\left(\frac{df}{d\mathbf{z}_t}\right) \]
-            \end{blackblock}
+            \colorblock{black}[Remark][\footnotesize]{
+                \emph{Instantaneous COV}
+                \[ \frac{\partial \log p_t(\mathbf{x}_t)}{\partial t} = -\text{tr}\left(\frac{df}{d\mathbf{x}_t}\right) \]
+            }
         \end{column}
     \end{columns}
-    \vspace{.5cm}
     \onslide<2->{
     {\color{red}
     Given \( \mathbf{x}^{(i)} \) from dataset, now must compute \( \mathbf{x}^{(i)}_0 = \int_{1}^{0} f^{-1}_t (\mathbf{x}^{(i)}_t) \mathrm{d}t \)
@@ -180,14 +159,15 @@
         \includegraphics[width=0.5\linewidth]{figures/ode-backprop.png}
     \end{figure}
     }
+    \vspace{-.4cm}
     \onslide<3->{
     \emph{Can we learn \( f_t \) without backprop through an ODE?}
     }
 \end{frame}
-\begin{frame}{Flow Matching for Generative Modeling \cite{lipmanFlowMatchingGenerative2023}}
-    \begin{blackblock}
-    \textbf{Disclaimer:} \( f_t \) will now often be referred to as the \emph{flow}.
-    \end{blackblock}
+\begin{frame}{Flow Matching for Generative Modeling \citep{lipmanFlowMatchingGenerative2023}}
+    \colorblock{black}[Disclaimer]{
+    \( f_t \) will now often be referred to as the \emph{flow}.
+    }
     \textbf{Book keeping.} We say the \emph{flow} \( f_t \) \emph{generates} a probability path \( p_t \) if \( X_t = f_t(X_{0}) \sim p_t \). Equivalently,
     \begin{align*}
         p_t(x) = [f_{t\sharp}p_0](x) \triangleq  p_0(f_t^{-1}(y)) \left|\det \partial_y f_t^{-1}(y)\right|
@@ -198,9 +178,9 @@
     \end{figure}
 \end{frame}
 \begin{frame}
-    \begin{blackblock}
-    \textbf{Key Idea:} Do \textbf{not} learn the \emph{flow} \( f_t \), learn the \textbf{velocity} of the flow.
-    \end{blackblock}
+    \colorblock{black}[Key Idea]{
+    Do \textbf{not} learn the \emph{flow} \( f_t \), learn the \textbf{velocity} of the flow.
+}
 \textbf{Def.} This velocity is a \emph{vector field} \( u_t : \mathbb{R}^d \to \mathbb{R}^d \), such that
 \begin{align*}
     \frac{\mathrm{d}f_t(\mathbf{x})}{\mathrm{d}t} = u_t(f_t(\mathbf{x}))
@@ -210,8 +190,8 @@ To sample, solve ODE at \textbf{sample time} i.e.
 \begin{align*}
     f_{t + \Delta t}(\mathbf{x}) \approx f_t(\mathbf{x}) + \Delta t \cdot u_t(f_t(\mathbf{x})) \tag*{(Euler method)}
 \end{align*}
-By uniqueness of ODE, (vector field \(u_t\)) \( \leftrightarrow \) (flow \( f_t \)). \\
-\vskip 5pt
+By uniqueness of ODE, (vector field \(u_t\)) \( \leftrightarrow \) (flow \( f_t \)).
+\par
 \begin{figure}
     \centering
     \includegraphics[width=\linewidth]{figures/vector-vis.png}
@@ -219,26 +199,23 @@ By uniqueness of ODE, (vector field \(u_t\)) \( \leftrightarrow \) (flow \( f_t 
 }
 \end{frame}
 \begin{frame}
-    \textbf{Def.} A \emph{vector field} \( u_t \) \emph{generates} a probability path \( p_t \) if its corresponding flow \( f_t \) \emph{generates} \( p_t \). \\
-    \vskip 5pt
+    \textbf{Def.} A \emph{vector field} \( u_t \) \emph{generates} a probability path \( p_t \) if its corresponding flow \( f_t \) \emph{generates} \( p_t \).
+    \par
     \textbf{Thm.} A \emph{vector field} \( u_t \) \emph{generates} a probability path \( p_t \) if and only if it satisfies the \emph{continuity equation}.
-    \begin{blackblock}
-    \textbf{Continuity Equation.}
+    \colorblock{black}[Continuity Equation]{
     \[ \frac{\mathrm{d}}{\mathrm{d}t}p_t(x) + \mathrm{div}(p_t u_t)(x) = 0, \]
     where $\text{div}(v)(x) = \sum_{i=1}^{d} \partial_{x^{i}} v^{i}(x)$, and $v(x) = (v^{1}(x), \ldots, v^{d}(x))$.
-    \end{blackblock}
+    }
     \begin{figure}
         \centering
         \includegraphics[width=\linewidth]{figures/density-vis.png}
     \end{figure}
 \end{frame}
 \begin{frame}
-    \begin{blackblock}
-    \textbf{Continuity Equation.}
+    \colorblock{black}[Continuity Equation]{
     \[ \frac{\mathrm{d}}{\mathrm{d}t}p_t(x) + \mathrm{div}(p_t u_t)(x) = 0, \]
-
     where $\text{div}(v)(x) = \sum_{i=1}^{d} \partial_{x^{i}} v^{i}(x)$, and $v(x) = (v^{1}(x), \ldots, v^{d}(x))$.
-    \end{blackblock}
+    }
     \textbf{Proof: (If people care)}
     \begin{align*}
         \frac{d}{dt}\mathbb{E}f(X_t) &= \frac{d}{dt}\int_{\mathbb{R}^d} f(x)p_t(x)dx = \int_{\mathbb{R}^d} f(x)\partial_t p_t(x)dx, \\
@@ -247,7 +224,6 @@ By uniqueness of ODE, (vector field \(u_t\)) \( \leftrightarrow \) (flow \( f_t 
                                   &= \int_{\mathbb{R}^d} -f(x)\text{div}(v_t(x)p_t(x))dx.
     .\end{align*}
     The result follows from fundamental lemma of calculus of variations.
-
 \end{frame}
 
 \section{Flow Matching}
@@ -257,45 +233,44 @@ By uniqueness of ODE, (vector field \(u_t\)) \( \leftrightarrow \) (flow \( f_t 
     \end{center}
 \end{frame}
 \begin{frame}
-    \begin{blackblock}
-        \textbf{Flow Model Loss}
+    \colorblock{black}[Flow Model Loss]{
         \[ \mathcal{L}_{\text{\tiny FM}}(\theta) = \mathbb{E}_{t, p_t(x)} \|v_{t}(x; \theta) - u_t(x)\|^2 \]
-    \end{blackblock}
-    \begin{itemize}
+    }
+   \begin{itemize}
         \item \( p_t : \mathcal{X} \to [0, 1] \): probability density path.
         \item \( u_t : \mathbb{R}^d \to \mathbb{R}^d \): vector field that \emph{generates} \( p_t \).
     \end{itemize}
     \vspace*{.5cm}
     \onslide<2->{
-    \begin{redblock}
+        \colorblock{red}[Intractable]{
+    \begin{enumerate}
         \color{red}
-        \textbf{Intractable.}
-        \begin{enumerate}
-            \color{red}
-            \item How to choose \( p_t \)?
-            \item<3-> Given \( p_t \) need to solve continuity equation for \( u_t \), which is a \textbf{PDE} likely without close-form.
-        \end{enumerate}
-    \end{redblock}
+        \item How to choose \( p_t \)?
+        \item<3-> Given \( p_t \) need to solve continuity equation for \( u_t \), which is a \textbf{PDE} likely without close-form.
+    \end{enumerate}
+    }
     }
 \end{frame}
 
 \begin{frame}
-    \begin{blackblock}
-    \textbf{Key Idea:} \emph{Given the endpoint \( X_{1} \), we can easily construct a path between \( X \) and \( X_{1} \).}
-    \end{blackblock}
-    \textbf{Ex:} \emph{Consider} \[ f_t(x \mid x_{1}) = tx_{1} + (1 - (1 - \sigma_{\mathrm{min}})t)x \]
+    \colorblock{black}[Key Idea]{
+    \emph{Given the endpoint \( X_{1} \), we can easily construct a path between \( X \) and \( X_{1} \).}
+    }
+    \textbf{Ex:} \emph{Consider} \[ f_t(x \mid x_{1}) = (1 - t)x + tx_{1} \]
     \vskip 3pt
     \begin{columns}
         \begin{column}{0.49\linewidth}
         \begin{figure}
             \centering
             \includegraphics[width=0.8\linewidth]{figures/marginal-path.png}
+            \caption{Without target \textbf{how} do we construct \( p_t \), \( f_t \)?}
         \end{figure}
         \end{column}
         \begin{column}{0.49\linewidth}
         \begin{figure}
             \centering
             \includegraphics[width=0.8\linewidth]{figures/conditional-path.png}
+            \caption{With target, make \( f_t \) \textbf{line} to known \( x_{1} \).}
         \end{figure}
         \end{column}
     \end{columns}
@@ -310,8 +285,8 @@ By uniqueness of ODE, (vector field \(u_t\)) \( \leftrightarrow \) (flow \( f_t 
     \begin{align*}
         p_t(\mathbf{x}) = \int p_t(\mathbf{x} \mid \mathbf{x}_{1}) q(\mathbf{x}_{1}) \mathrm{d}\mathbf{x}_{1} \tag*{(Marginal Density)}
     .\end{align*}
-    For \( p_{1}(\mathbf{x} \mid \mathbf{x}_{1}) \sim N(x_{1}, \sigma_{1}) \), with \( \sigma_{1} \ll 1 \), \( p_{1}(\mathbf{x}) \approx q(\mathbf{x}) \). \\
-    \vskip 5pt
+    For \( p_{1}(\mathbf{x} \mid \mathbf{x}_{1}) \sim N(x_{1}, \sigma_{1}) \), with \( \sigma_{1} \ll 1 \), \( p_{1}(\mathbf{x}) \approx q(\mathbf{x}) \).
+    \par
     \onslide<2->{
     \textbf{Idea 2:} Use this to define an approximate vector field
     \begin{align*}
@@ -320,21 +295,21 @@ By uniqueness of ODE, (vector field \(u_t\)) \( \leftrightarrow \) (flow \( f_t 
     Here, \( u_t(\mathbf{x} \mid \mathbf{x}_1) \) is the conditional vector field that generates \( p_t(\mathbf{x} \mid \mathbf{x}_1) \).
     }
     \onslide<3->{
-        \begin{blackblock}
-            \textbf{Thm.} \emph{The marginal vector field \( u_t \) generates the marginal probability path \( p_t \).} (Check continuity equation)
-        \end{blackblock}
+        \colorblock{black}[Thm]{
+        \emph{The marginal vector field \( u_t \) generates the marginal probability path \( p_t \).} (Check continuity equation)
+        }
     }
     
 \end{frame}
 
 \begin{frame}
-    \begin{blackblock}
-    \textbf{Conditional Flow Model Loss} \[ \mathcal{L}_{\text{\tiny CFM}}(\theta) = \mathbb{E}_{t, q(x_{1}), p_t(x \mid x_{1})} \|v_{t}(x; \theta) - u_t(x \mid x_{1})\|^2 \]
-    \end{blackblock}
+    \colorblock{black}[Conditional Flow Model Loss]{
+     \[ \mathcal{L}_{\text{\tiny CFM}}(\theta) = \mathbb{E}_{t, q(x_{1}), p_t(x \mid x_{1})} \|v_{t}(x; \theta) - u_t(x \mid x_{1})\|^2 \]
+    }
     \onslide<2->{
-    \begin{blackblock}
-        \textbf{Thm.} \emph{Up to a constant independent of \( \theta \), \( \mathcal{L}_{\text{\tiny FM}}(\theta ) =  \mathcal{L}_{\text{\tiny CFM}}(\theta )\). In particular, \( \nabla \mathcal{L}_{\text{\tiny FM}}(\theta ) =  \nabla \mathcal{L}_{\text{\tiny CFM}}(\theta )\)}. 
-    \end{blackblock}
+        \colorblock{black}[Thm]{
+         \emph{Up to a constant independent of \( \theta \), \( \mathcal{L}_{\text{\tiny FM}}(\theta ) =  \mathcal{L}_{\text{\tiny CFM}}(\theta )\). In particular, \( \nabla \mathcal{L}_{\text{\tiny FM}}(\theta ) =  \nabla \mathcal{L}_{\text{\tiny CFM}}(\theta )\)}. 
+    }
     \begin{columns}
         \begin{column}{0.28\linewidth}
         \begin{figure}
@@ -371,13 +346,14 @@ By uniqueness of ODE, (vector field \(u_t\)) \( \leftrightarrow \) (flow \( f_t 
 
 \begin{frame}{Example: Optimal Transport}
     \only<1-3>{
-    For \( f_t(x) = \mu_t(x_{1}) + x \sigma_t(x_{1}) \), we consider
+        For \( x \sim \mathcal{N}(0, 1) \), \[ f_t(x) = \mu_t(x_{1}) + x \sigma_t(x_{1}) \implies f_t(x) \sim \mathcal{N}(\mu_t(x), \sigma_t(x).\] 
+    Consider
     \begin{align*}
         \mu_t = tx_{1}, \quad \sigma_t(x) = 1 - (1 - \sigma_{\min})t
     ,\end{align*}
     such that
     }
-    \only<2-3>{
+    \only<2->{
         \begin{align*}
             f_t^{-1}(x) = \frac{x - tx_{1}}{1 - (1-\sigma_{\min})t}, \quad \frac{\mathrm{d}}{\mathrm{d}t} f_t(x) = x_{1} - (1 - \sigma_{\min})x
         .\end{align*}
@@ -395,14 +371,14 @@ By uniqueness of ODE, (vector field \(u_t\)) \( \leftrightarrow \) (flow \( f_t 
         .\end{align*}
     }
     \only<5->{
-        \begin{blackblock}
+        \colorblock{black}{
             \centering
             $\mathcal{L}_{\text{\tiny CFM}}(\theta) = \mathbb{E}_{t, q(x_{1}), p_t(x \mid x_{1})} \left\|v_{t}(x; \theta) - \frac{x_{1} - (1 - \sigma_{\min})x}{1 - (1 - \sigma_{\min})t}\right\|^2$
-        \end{blackblock}
+        }
     }
 \end{frame}
 
-\begin{frame}{Diffusion Meets Flow Matching: Two Sides of the Same Coin \cite{gaoDiffusionMeetsFlow2024}}
+\begin{frame}{Diffusion Meets Flow Matching: Two Sides of the Same Coin \citep{gaoDiffusionMeetsFlow2024}}
     Recall that instead of an ODE, in diffusion, we have a \textbf{SDE}
     \begin{align*}
         \mathrm{d}\mathbf{x}_t = f_t(\mathbf{x}_t)\mathrm{d}t + \sigma(\mathbf{x}_t) \mathrm{d}B_t
@@ -411,19 +387,18 @@ By uniqueness of ODE, (vector field \(u_t\)) \( \leftrightarrow \) (flow \( f_t 
     \begin{align*}
         u_t(\mathbf{x}_t) = -(\mathbf{x}_t + \nabla \ln p_t(\mathbf{x}_t))
     .\end{align*}
-    Similarly, learning the score function \( \nabla \ln p_t(\mathbf{x}_t) \) can be rewritten as the flow matching objective for certain choices of \( p_t \) see \cite{lipmanFlowMatchingGuide2024a}.
+    Similarly, learning the score function \( \nabla \ln p_t(\mathbf{x}_t) \) can be rewritten as the flow matching objective for certain choices of \( p_t \) see \citep{lipmanFlowMatchingGuide2024a}.
 \end{frame}
 
 \begin{frame}{Why Flows?}
-    \begin{blackblock}
-        \textbf{Anecdotally.}
+    \colorblock{black}[Anecdotally]{
         \begin{itemize}
             \item{\footnotesize \emph{The OT path’s conditional
-                vector field has constant direction in time and is arguably simpler to fit with a parametric model. \cite{lipmanFlowMatchingGenerative2023}}}
+                vector field has constant direction in time and is arguably simpler to fit with a parametric model. \citep{lipmanFlowMatchingGenerative2023}}}
             \item{\footnotesize \emph{The deterministic
-                nature of ODEs equips flow-matching methods with simpler learning objectives and faster inference speed \cite{zhengIntentionConditionedFlowOccupancy2025}}}
+                nature of ODEs equips flow-matching methods with simpler learning objectives and faster inference speed \citep{zhengIntentionConditionedFlowOccupancy2025}}}
         \end{itemize}
-    \end{blackblock}
+    }
     \vspace*{.5cm}
 \begin{figure}
     \hspace*{-.5cm}
@@ -442,7 +417,7 @@ By uniqueness of ODE, (vector field \(u_t\)) \( \leftrightarrow \) (flow \( f_t 
 \end{frame}
 
 \section{Application to Reinforcement Learning}
-\begin{frame}{Q learning is not yet scalable \cite{parkQlearningNotScalable2025}}
+\begin{frame}{Q learning is not yet scalable \citep{parkQlearningNotScalable2025}}
     \textbf{Long horizon problems are hard.}
     \begin{align*}
 \mathbb{E}_{(s,a,r,s')\sim \mathcal{D}}\bigg[\Big(Q_\theta(s,a)-\underbrace{\big(r+\gamma \max_{a'}Q_{\bar{\theta}}(s',a')\big)}_{\texttt{Biased}}\Big)^2\bigg]
@@ -465,12 +440,15 @@ By uniqueness of ODE, (vector field \(u_t\)) \( \leftrightarrow \) (flow \( f_t 
        \end{column}
     \end{columns}
 \end{frame}
-\begin{frame}{Temporal Difference Flows \cite{farebrotherTemporalDifferenceFlows2025}}
-    \begin{blackblock}
-        \textbf{Idea:} Apply flow matching to learn the \emph{successor measure} of an MDP.
-    \end{blackblock}
+\begin{frame}{Temporal Difference Flows \citep{farebrotherTemporalDifferenceFlows2025}}
+    \colorblock{black}[Idea]{
+         Apply flow matching to learn the \emph{successor measure} of an MDP.
+    }
+    \onslide<2->{
     \textbf{Def.} We define the \emph{successor measure} as
 \[ m^{\pi}(\mathsf{X} \mid s, a) = (1 - \gamma) \sum_{k=0}^{\infty} \gamma^{k} \Pr(S_{k+1} \in \mathsf{X} \mid S_{0} = s, A_{0} = a, \pi), \]
+    }
+    \onslide<3->{
 \textbf{Recall.} The \emph{successor measure} is the unique fix point to the \emph{Bellman} equation
 \begin{align*}
  m^{\pi}(\cdot \mid s, a) &= (\mathcal{T}^{\pi} m^{\pi}) (\cdot \mid s, a) \\
@@ -478,37 +456,41 @@ By uniqueness of ODE, (vector field \(u_t\)) \( \leftrightarrow \) (flow \( f_t 
 ,\end{align*}
 where
 \[ (P^{\pi}m) (\mathrm{d}x \mid s, a) = \int_{s'} P(\mathrm{d}s' \mid s, a) m(\mathrm{d}x \mid s', \pi(s')). \]
+}
 \end{frame}
 \begin{frame}
-    The most straightforward idea is to just substitute \( m^{\pi} \) for \( q \) in flow matching i.e.
-\[ \mathcal{L}_{\text{MC-CFM}}(\theta) = \mathbb{E}_{\rho, t, Z, X_t} \Big[ \big\| \tilde{v}_t(X_t \mid S, A; \theta) - u_{t}(X_t \mid Z) \big\|^2 \Big], \] where $Z = X_1 \sim m^{\pi}(\cdot \mid S, A), X_t \sim p_{t}(\cdot \mid Z).$ \\
-\vskip 5pt
-Here we just use the optimal transport conditional vector field and corresponding probability density path. \\
-\vskip 5pt
-\onslide<2->{
-{\color{red} This requires direct access to samples from \( m^{\pi} \).} \\
-\vskip 5pt
-\emph{Can we learn from offline one-step transitions \( (S, A, S') \)?} \\
-\vskip 5pt
+    The most straightforward idea is to just substitute \( m^{\pi} \) for \( q \) in flow matching 
+    \onslide<2->{
+    i.e.
+\[ \mathcal{L}_{\text{MC-CFM}}(\theta) = \mathbb{E}_{\rho, t, Z, X_t} \Big[ \big\| \tilde{v}_t(X_t \mid S, A; \theta) - u_{t}(X_t \mid Z) \big\|^2 \Big], \] where $Z = X_1 \sim m^{\pi}(\cdot \mid S, A), X_t \sim p_{t}(\cdot \mid Z).$
+\par
+Here we just use the optimal transport conditional vector field and corresponding probability density path.
+\par
 }
 \onslide<3->{
-\begin{blackblock}
+{\color{red} This requires direct access to samples from \( m^{\pi} \).}
+\par
+\emph{Can we learn from offline one-step transitions \( (S, A, S') \)?}
+\par
+}
+\onslide<4->{
+    \colorblock{black}{
 Leverage \textbf{recursive} structure of Bellman equation i.e.
 \begin{gather*}
     X_{0} \sim p_{0} \\
     Z = X_1 \sim (1 - \gamma)\delta_{S'} + \gamma \delta_{\tilde{f}_1(X_0 \mid S', \pi(S'))} \tag*{(TD-CFM)}
 .\end{gather*}
-\end{blackblock}
+}
 }
     \end{frame}
     \begin{frame}
-    \begin{blackblock}
+        \colorblock{black}{
     Leverage \textbf{recursive} structure of Bellman equation i.e.
     \begin{gather*}
         X_{0} \sim p_{0} \\
         Z = X_1 \sim (1 - \gamma)\delta_{S'} + \gamma \delta_{\tilde{f}_1(X_0 \mid S', \pi(S'))}
     .\end{gather*}
-    \end{blackblock}
+}
     \begin{itemize}
         \item With probability \( (1 - \gamma) \), \( X_{1} = S' \)
         \item With probability \( \gamma \), sample from \( \tilde{m}^{\pi} \) by integrating \( \tilde{f}_t \).
@@ -523,17 +505,15 @@ Leverage \textbf{recursive} structure of Bellman equation i.e.
     \textbf{Lemma}. Let $v_t^1$ and $v_t^2$ be vector fields that generate the probability paths $p_t^1$ and $p_t^2$, respectively. Then, for any $\gamma \in [0, 1]$, the mixture probability path $p_t = (1 - \gamma)p_t^1 + \gamma p_t^2$ is generated by the vector field.
 \[ v_t := \frac{(1-\gamma)p_t^1v_t^1 + \gamma p_t^2v_t^2}{(1-\gamma)p_t^1 + \gamma p_t^2}. \]
 \onslide<2->{
-\textbf{Remember} The \emph{successor measure} is the unique fix point to the \emph{Bellman} equation
+\textbf{Remember}. The \emph{successor measure} is the unique fix point to the \emph{Bellman} equation
 \begin{align*}
- m^{\pi}(\cdot \mid s, a) &= (1 - \gamma)P(\cdot \mid s, a) + \gamma (P^{\pi} m^{\pi}) (\cdot \mid s, a)
+    m^{\pi}(\cdot \mid s, a) &= (1 - \gamma)\underbrace{P(\cdot \mid s, a)}_{p_t^1} + \gamma \underbrace{(P^{\pi} m^{\pi}) (\cdot \mid s, a)}_{p_t^2}
 ,\end{align*}
-where
-\[ (P^{\pi}m) (\mathrm{d}x \mid s, a) = \int_{s'} P(\mathrm{d}s' \mid s, a) m(\mathrm{d}x \mid s', \pi(s')). \]
 }
 \onslide<3->{
-\begin{blackblock}
-    \textbf{Idea:} Learn \( v_t \) for \( p_t^1 = P(\cdot \mid S, A) \), \( p_t^2 = (P^{\pi} m)(\cdot \mid S, A) \)
-\end{blackblock}
+    \colorblock{black}[Idea]{
+     Learn \( v_t \) for \( p_t^1 = P(\cdot \mid S, A) \), \( p_t^2 = (P^{\pi} m)(\cdot \mid S, A) \)
+}
 }
     \end{frame}
 \begin{frame}
@@ -543,12 +523,11 @@ where
     .\end{align*}
     \onslide<2->{
         \vspace*{-.25cm}
-    \begin{blackblock}
-        \textbf{Substitute.}
+        \colorblock{black}[Substitute]{
     \begin{align*}
         v_t = \underset{v: \mathbb{R}^d \to \mathbb{R}^d}{\arg \min} \Big\{ (1 - \gamma) &\overbrace{\mathbb{E}_{x_t \sim P} \left[ ||v_t(x_t) - v_t^1(x_t)||^2 \right]}^{\mathcal{L}_{\mathrm{OS}}} \\ &+ \gamma \underbrace{\mathbb{E}_{x_t \sim P^{\pi} m} \left[ ||v_t(x_t) - v_t^2(x_t)||^2 \right]}_{\mathcal{L}_{\mathrm{GHM}}} \Big\}
     .\end{align*}
-    \end{blackblock}
+}
 }
 \onslide<3->{
     \emph{How do we get \( v_t^{1} \) and \( v_t^{2} \)?}
@@ -558,43 +537,96 @@ where
 }
     \end{frame}
     \begin{frame}
-        \textbf{Case 1:} \( \mathcal{L}_{\mathrm{OS}} \), \( S' \sim P(\cdot \mid S, A) \)
+        \begin{minipage}{0.5\linewidth}
+            \colorblock{black}[Case 1]{
+        \( \mathcal{L}_{\mathrm{OS}} \), \( S' \sim P(\cdot \mid S, A) \)
+            }
+        \end{minipage}
+        \begin{enumerate}
+            \item Our dataset \( (S, A, S') \) has plenty of samples \( S' \sim P(\cdot \mid S,A) \)
+            \item \( \vec{u}_t(\cdot \mid Z) \), \( \vec{p}_t(\cdot \mid Z) \) can be chosen as done before in \textbf{traditional} flow matching
+        \end{enumerate}
 \[ \vec{v}_t(x \mid s, a) = \int \vec{u}_{t}(x \mid x_1) \frac{\vec{p}_{t}(x \mid x_1) P(\mathrm{d}x_1 \mid s, a)}{\vec{p}_t(x \mid s, a)}, \]
 \onslide<2->{
-\begin{blackblock}
+    \colorblock{black}{
     \[ \begin{aligned} \mathcal{L}_{COS}(\theta) &= \mathbb{E}_{\rho,t,Z,\vec{X}_t}\Big[\big\|\tilde{v}_t(\vec{X}_t\mid S, A; \theta) - \vec{u}_{t}(\vec{X}_t\mid Z)\big\|^2\Big]\,,\\ &\text{where}\ Z = X_1 \sim P(\cdot\mid S, A),\ \vec{X}_t \sim \vec{p}_{t}(\cdot\mid Z)\, \end{aligned} \]
-\end{blackblock}
-\begin{itemize}
-    \item \( \vec{u}_t(\cdot \mid Z) \), \( \vec{p}_t(\cdot \mid Z) \) can be chosen as in \textbf{traditional} flow matching i.e. OT.
-\end{itemize}
+}
 }
     \end{frame}
     \begin{frame}
-        \textbf{Case 2:} We sample future state
-\[ \widehat{v}_t^{(n)}(x \mid s,a) = \int v_t^{(n)}(x \mid s',a') \frac{m_t^{(n)}(x \mid s',a')P(\mathrm{d}s' \mid s,a)}{\widehat{p}_t^{(n)}(x \mid s,a)}, \]
-where $\widehat{p}_t^{(n)}(x \mid s, a) = \int m_t^{(n)}(x \mid s', a') P(\text{d}s' \mid s, a)$, and $a' = \pi(s')$. \\
-\vskip 5pt
-\onslide<2->{
-    \textbf{Remark.} They show if \( v_t^{(n)} \) is optimizer of proposed loss then \( v_t^{(n)} \) generates \( m_t^{(n)} \).
-}
+        \begin{minipage}{0.6\linewidth}
+            \colorblock{black}[Case 2]{
+                \( \mathcal{L}_{\mathrm{GHM}} \), \( S' \sim (P^{\pi} m)(\cdot \mid S, A) \)
+            }
+        \end{minipage}
+        \par
+        \textbf{Assume.} probability path \( m_t \), such that \( m_{0} = m_{0} \) and \( m_{1} = m_{1} \).
+        \par
+        \textbf{Recall.} We want a \emph{marginal} distribution, such that
+        \begin{align*}
+            (P^{\pi} m_t)(\cdot \mid S, A) \approx \int_{S'} p_t(\cdot \mid S', A') q(S' \mid S, A)
+        \end{align*}
+        for some \( p_t \) and \( q \).
+        \par
+        \onslide<2->{
+        \textbf{Note.} Taking \( p_t(\cdot \mid S') \) to be \( N(S', \sigma) \) and \( q \) to be the desired distribution was just one choice. Need following criteria:
+        \begin{enumerate}
+            \item \( p_t(\cdot \mid S', A') \) can be sampled from,
+            \item The conditional vector field \( u_t(\cdot \mid S', A') \) that generates \( p_t(\cdot \mid S', A') \) can be easily computed,
+            \item Marginal \( p_{1} \approx P^{\pi}m_{1} = P^{\pi} m \).
+        \end{enumerate}
+        }
+    \end{frame}
+    \begin{frame}
+        \begin{minipage}{0.6\linewidth}
+            \colorblock{black}[Case 2]{
+                \( \mathcal{L}_{\mathrm{GHM}} \), \( S' \sim (P^{\pi} m)(\cdot \mid S, A) \)
+            }
+        \end{minipage}
+        \par
+        By definition,
+        \begin{align*}
+            (P^{\pi} m)(\cdot \mid S, A) \approx \int_{S'} m(\cdot \mid S', A') P(S' \mid S, A).
+        \end{align*}
+        In particular,
+        \begin{align*}
+            (P^{\pi} m)(\cdot \mid S, A) \approx \int_{S'} m_{1}(\cdot \mid S', A') P(S' \mid S, A)
+        \end{align*}
+        and \( m_t \) satisfies (1),(2),(3)!
+        \par
+        \emph{Chicken or the egg: How do we compute the vector field that generates \( m_t \)?}
+    \end{frame}
+    \begin{frame}
+        \begin{minipage}{0.6\linewidth}
+            \colorblock{black}[Case 2]{
+                \( \mathcal{L}_{\mathrm{GHM}} \), \( S' \sim (P^{\pi} m)(\cdot \mid S, A) \)
+            }
+        \end{minipage}
+        \par
+        \textbf{Lemma.} If \( v_t^{(n+1)} = \arg\max \mathcal{L}_{\mathrm{OS} + \mathrm{GHM}}(v_t^{(n)})\) then \( v_t^{(n + 1)} \) generates \( m_t^{(n + 1)} \) and \( m_t^{(n + 1)} = \mathcal{T}^{\pi} m_t^{(n)} \).
+        \par
+        \onslide<2->{
+            \textbf{Implication.} Use \( v_t^{(n + 1)}( \cdot | S', A') \) in \textbf{CFM} loss \( \implies \) will converge to vector field that generates \( P^{\pi} m_t \).
+    }
+\par
 \onslide<3->{
-\begin{blackblock}
+    \colorblock{black}{
     \[ \mathcal{L}_{CGHM}(\theta) = \mathbb{E}_{\rho,t,\widehat{X}_t} \left[ \left\| \tilde{v}_t(\widehat{X}_t \mid S, A; \theta) - \tilde{v}_t^{(n)}(\widehat{X}_t \mid S', \pi(S') \right\|^2 \right], \]where $X_0 \sim p_0$, $S' \sim P(\cdot \mid S, A)$, $\widehat{X}_t = \widetilde{f}_t^{(n)}(X_0 \mid S', \pi(S'))$,
-\end{blackblock}
+}
 }
     \end{frame}
     \begin{frame}
-        Combine the \textbf{objectives}!!
-\begin{blackblock}
+        Now we just combine the \textbf{objectives}!!
+        \colorblock{black}{
     \[ \begin{aligned} \mathcal{L}_{COS}(\theta) &= \mathbb{E}_{\rho,t,Z,\vec{X}_t}\Big[\big\|\tilde{v}_t(\vec{X}_t\mid S, A; \theta) - \vec{u}_{t}(\vec{X}_t\mid Z)\big\|^2\Big]\,,\\ &\text{where}\ Z = X_1 \sim P(\cdot\mid S, A),\ \vec{X}_t \sim \vec{p}_{t}(\cdot\mid Z)\, \end{aligned} \]
-\end{blackblock}
+}
 \begin{center}
     \Large
     \( + \)
 \end{center}
-\begin{blackblock}
+\colorblock{black}{
     \[ \mathcal{L}_{CGHM}(\theta) = \mathbb{E}_{\rho,t,\widehat{X}_t} \left[ \left\| \tilde{v}_t(\widehat{X}_t \mid S, A; \theta) - \tilde{v}_t^{(n)}(\widehat{X}_t \mid S', \pi(S') \right\|^2 \right], \]where $X_0 \sim p_0$, $S' \sim P(\cdot \mid S, A)$, $\widehat{X}_t = \widetilde{f}_t^{(n)}(X_0 \mid S', \pi(S'))$,
-\end{blackblock}
+}
 \vspace*{.5cm}
 \[
     \mathcal{L}_{\mathrm{TD}^2\mathrm{-CFM}}(\theta) = (1 - \gamma) \mathcal{L}_{COS}(\theta) + \gamma \mathcal{L}_{CGHM}(\theta) \implies \text{ Lower }\mathbb{E}\nabla \mathcal{L}^2
@@ -638,8 +670,8 @@ where $\widehat{p}_t^{(n)}(x \mid s, a) = \int m_t^{(n)}(x \mid s', a') P(\text{
 
 
 \begin{frame}{References}
-    \tiny
-    \bibliographystyle{alpha}
+    \footnotesize
+    \bibliographystyle{bib}
     \bibliography{references}
 \end{frame}
 

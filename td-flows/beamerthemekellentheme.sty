@@ -2,10 +2,12 @@
 
 \RequirePackage{fontspec}
 \RequirePackage{graphicx}
-\usefonttheme{serif}
+\RequirePackage{tcolorbox}
+\RequirePackage{natbib}     % For formatting references
 
-% Load required components
-% \usepackage{beamerthemedefault} % Base theme
+\setcitestyle{authoryear,round,citesep={;},aysep={,},yysep={;}}
+
+\usefonttheme{serif}
 
 % Font and color
 \defaultfontfeatures{Scale=MatchLowercase}
@@ -27,33 +29,34 @@
 \definecolor{green}{RGB}{117,152,141}
 \definecolor{orange}{RGB}{216,96,24}
 
-\setbeamercolor{block title}{bg=gray!10,fg=blue}
-\setbeamercolor{block body}{bg=gray!10,fg=black}
-\setbeamerfont{block title}{series=\bfseries, size=\normalsize}
-\setbeamerfont{block body}{series=\mdseries, size=\small}
-\setbeamertemplate{blocks}[rounded][shadow=false]
-
-% ALERT BLOCK (usually red)
-\setbeamercolor{block title alerted}{bg=red!10}
-\setbeamercolor{block body alerted}{bg=red!10, fg=black}
-
-% EXAMPLE BLOCK (usually green/blue)
-\setbeamercolor{block title example}{bg=green!30, fg=green!90!black}
-\setbeamercolor{block body example}{bg=green!30, fg=black}
-
-\newenvironment{borderblock}[1]{%
-  \setbeamercolor{block body orange}{bg=orange!10, fg=black}
-  \begin{beamerboxesrounded}[lower=block body orange, upper=block title orange]{\usebeamerfont{block title}\bfseries #1}
-}{%
-  \end{beamerboxesrounded}
+% Define a macro for a colored block
+\newtcolorbox{coloredblock}[1]{%
+  colframe=#1,        % Border color
+  coltitle=#1,        % Title text color
+  colback=white,      % Background color
+  colbacktitle=white,    % Title background color
+  coltext=#1,         % Body text color
+  boxrule=1pt,         % Border width
+  arc=1mm,               % Rounded corners (optional)
+  left=1mm, right=1mm, top=1mm, bottom=1mm,
+  fonttitle=\bfseries,
 }
 
-\newenvironment{orangeblock}[1]{%
-  \setbeamercolor{block title orange}{fg=orange,bg=orange!10}
-  \setbeamercolor{block body orange}{bg=orange!10, fg=black}
-  \begin{beamerboxesrounded}[lower=block body orange, upper=block title orange]{\usebeamerfont{block title}\bfseries #1}
-}{%
-  \end{beamerboxesrounded}
+% Convenience macro
+\NewDocumentCommand{\colorblock}{m o o m}{%
+  \IfValueTF{#2}{%
+  \begin{coloredblock}{#1}{
+      \IfValueTF{#3}{#3}{\relax}%
+      \color{#1} \textbf{#2}.
+      #4
+  }\end{coloredblock}%
+  }{
+  \begin{coloredblock}{#1}{
+      \IfValueTF{#3}{#3}{\relax}%
+      \color{#1}
+      #4 \\
+  }\end{coloredblock}%
+  }
 }
 
 % Set TOC appearance
@@ -81,6 +84,27 @@
 \setbeamercolor{structure}{fg=blue}
 \setbeamercolor{item}{fg=blue}
 
+\RequirePackage{etoolbox}
+\RequirePackage[font=footnotesize,labelfont=bf]{caption}
+\captionsetup{justification=centering}
+
+% Set no indent and 5pt spacing globally
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{6pt}
+
+% Fix indent after common environments
+\AtEndEnvironment{equation}{\noindent}
+\AtEndEnvironment{equation*}{\noindent}
+\AtEndEnvironment{displaymath}{\noindent}
+\AtEndEnvironment{align}{\noindent}
+\AtEndEnvironment{align*}{\noindent}
+\AtEndEnvironment{itemize}{\noindent}
+\AtEndEnvironment{enumerate}{\noindent}
+\AtEndEnvironment{tcolorbox}{\noindent}
+\AtEndEnvironment{quote}{\noindent}
+\AtEndEnvironment{center}{\noindent}
+\AtEndEnvironment{coloredblock}{\vskip 5pt}
+
 % Customize frametitle
 \setbeamertemplate{title page}{
   \begin{flushleft}
@@ -104,6 +128,11 @@
   \end{flushleft}
 }
 
+
+% Remove navigation symbols
+\setbeamertemplate{navigation symbols}{}
+\setbeamertemplate{headline}{}
+
 \defbeamertemplate*{footline}{myfootline}{
 \ifnum \insertpagenumber=1
 
@@ -114,10 +143,10 @@
 \end{beamercolorbox}}%
 \vskip0pt%
 \else
+  \vspace*{-5pt}
 \hspace*{.5cm}\Tiny{%
-\hspace*{50pt} \hfill\insertframenumber/\inserttotalframenumber\hspace*{.00cm} \\ \vspace*{5pt}}%
+  \hfill(\insertframenumber/\inserttotalframenumber)\hspace*{5pt}
+}%
+\vspace*{10pt}
 \fi
 }
-
-% Remove navigation symbols
-\setbeamertemplate{navigation symbols}{}
